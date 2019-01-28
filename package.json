@@ -1,0 +1,25 @@
+{
+  "name": "@ts-module-for-gas/gas-slack",
+  "version": "0.0.1",
+  "description": "Slack module for GAS that written by TypeScript",
+  "main": "index.ts",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/awa2/GAS-Slack.git"
+  },
+  "author": "awa2 <takanori.awatsu+npm@gmail.com> (Takanori Awatsu)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/awa2/GAS-Slack/issues"
+  },
+  "homepage": "https://github.com/awa2/GAS-Slack#readme",
+  "dependencies": {
+    "@types/google-apps-script": "0.0.34"
+  }
+}
