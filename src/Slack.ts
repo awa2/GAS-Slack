@@ -38,7 +38,7 @@ export class Slack {
         }
     }
 
-    public static handleInvocation(invocation: Invocation, callback: Function) {
+    public static handleInvocation(invocation: Invocation, callback: (inv:Invocation, post: Post)=>{}) {
         const post = new Post(invocation.user.name, invocation.channel.id, invocation.message_ts, invocation.original_message);
         const body = callback(invocation, post);
         const output = ContentService.createTextOutput(JSON.stringify(body));
