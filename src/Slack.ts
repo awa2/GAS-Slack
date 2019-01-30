@@ -1,6 +1,6 @@
 export class Slack {
     public static API_URL = 'https://slack.com/api';
-    private static TOKEN: string;
+    public static TOKEN: string;
     public static setToken(token: string) {
         Slack.TOKEN = token;
     }
@@ -34,74 +34,69 @@ export class Slack {
                 },
                 muteHttpExceptions: false
             }).getContentText());
-            return new Slack.Post(this.bot_name, res.channel, res.ts, res.message, this.token);
+            return new Post(this.bot_name, res.channel, res.ts, res.message, this.token);
         }
     }
 
-    public static Post = class {
-        public username: string;
-        public channel: string;
-        public ts: string;
-        public message: Message;
-        private token: string;
-
-        constructor(username: string, channel_id: string, ts: string, message: Message, token?: string) {
-            this.username = username;
-            this.channel = channel_id;
-            this.ts = ts;
-            this.message = message;
-            this.token = token ? token : Slack.TOKEN;
-            return this;
-        }
-        public update(attachment: Attachement) {
-            const payload = {
-                channel: this.channel,
-                text: '',
-                ts: this.ts,
-                link_names: 1,
-                parse: 'full',
-                username: this.username,
-                attachments: JSON.stringify([attachment])
-            }
-            return this.send('chat.postMessage', payload);
-        }
-        public destroy() {
-            const payload = {
-                channel: this.channel,
-                ts: this.ts
-            }
-            return this.send('chat.delete', payload);
-
-        }
-        public reply(text: String) {
-            const payload = {
-                channel: this.channel,
-                text: text,
-                thread_ts: this.ts,
-                link_names: 1,
-                parse: 'full',
-                username: this.username
-            }
-            return this.send('chat.postMessage', payload);
-        }
-        private send(endpoint: string, payload: Object): PostResponse {
-            return JSON.parse(UrlFetchApp.fetch(`${Slack.API_URL}/${endpoint}`, {
-                method: 'post',
-                payload: payload,
-                headers: {
-                    'Authorization': `Bearer ${this.token}`
-                },
-                muteHttpExceptions: false
-            }).getContentText());
-        }
-    }
-
-    public static handleInvocation(invocation: Invocation, callback: Function ) {
-        const post = new Slack.Post(invocation.user.name, invocation.channel.id, invocation.message_ts, invocation.original_message);
+    public static handleInvocation(invocation: Invocation, callback: Function) {
+        const post = new Post(invocation.user.name, invocation.channel.id, invocation.message_ts, invocation.original_message);
         const body = callback(invocation, post);
         const output = ContentService.createTextOutput(JSON.stringify(body));
         output.setMimeType(ContentService.MimeType.JSON);
         return output;
+    }
+}
+export class Post {
+    public username: string;
+    public channel: string;
+    public ts: string;
+    public message: Message;
+    private token: string;
+
+    constructor(username: string, channel_id: string, ts: string, message: Message, token?: string) {
+        this.username = username;
+        this.channel = channel_id;
+        this.ts = ts;
+        this.message = message;
+        this.token = token ? token : Slack.TOKEN;
+        return this;
+    }
+    public update(attachment: Attachement) {
+        const payload = {
+            channel: this.channel,
+            text: '',
+            ts: this.ts,
+            username: this.username,
+            attachments: JSON.stringify([attachment])
+        }
+        return this.send('chat.postMessage', payload);
+    }
+    public destroy() {
+        const payload = {
+            channel: this.channel,
+            ts: this.ts
+        }
+        return this.send('chat.delete', payload);
+
+    }
+    public reply(text: String) {
+        const payload = {
+            channel: this.channel,
+            text: text,
+            thread_ts: this.ts,
+            username: this.username
+        }
+        return this.send('chat.postMessage', payload);
+    }
+    private send(endpoint: string, payload: Object): PostResponse {
+        return JSON.parse(UrlFetchApp.fetch(`${Slack.API_URL}/${endpoint}`, {
+            method: 'post',
+            payload: payload,
+            headers: {
+                'Authorization': `Bearer ${this.token}`
+            },
+            muteHttpExceptions: false
+        }).getContentText());
     }
 }
 
