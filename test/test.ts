@@ -1,12 +1,13 @@
-import { Slack, Post, Invocation } from '../index';
+import {Slack, Post, Invocation } from '../index';
+
 const slackbot = new Slack.Bot('GAS-Bot', PropertiesService.getScriptProperties().getProperty('SLACK_BOT_TOKEN') as string);
 const channel = PropertiesService.getScriptProperties().getProperty('SLACK_CHANNEL') as string;
 
 function test_Bot_post() {
     const post = slackbot.post(channel,
         {
-            title: "@ts-module-for-gas/gas-slack:#test_Bot_post",
-            text: "下記を確認して下さい",
+            title: "Approval Request",
+            text: "Your approval is requested",
             fallback: "This is a fallback message",
             callback_id: "test_Bot_post",
             color: "black",
@@ -14,56 +15,46 @@ function test_Bot_post() {
             actions: [
                 {
                     name: "SelectiveAction",
-                    text: "アップデート",
+                    text: "Approve",
                     type: "button",
-                    value: "update"
-                },
-                {
-                    name: "SelectiveAction",
-                    text: "リプライ",
-                    type: "button",
-                    value: "reply"
-                },
-                {
-                    name: "SelectiveAction",
-                    text: "デストロイ",
-                    type: "button",
-                    value: "destroy",
+                    value: "approve",
                     confirm: {
-                        title: "本当に削除しますか？",
-                        text: "本当にこの投稿を削除しますか？",
-                        ok_text: "はい",
-                        dismiss_Text: "いいえ"
+                        title: "Confirm",
+                        text: "Do you really approve?",
+                        ok_text: "Yes",
+                        dismiss_Text: "No"
                     }
+                },
+                {
+                    name: "SelectiveAction",
+                    text: "Reject",
+                    type: "button",
+                    value: "reject"
                 }
             ]
         }
     );
 }
 function doPost(e: any) {
-    console.log(e.parameter.payload);
     return Slack.handleInvocation(e.parameter.payload, (invocation: Invocation, post: Post) => {
         const message = invocation.original_message;
         switch (invocation.actions[0].value) {
-            case 'update':
+            case 'approve':
                 if (message.attachments) {
-                    message.attachments[0].text = message.attachments[0].text + `\n ✅ <@${invocation.user.id}> updated!!`;
+                    message.attachments[0].text = message.attachments[0].text + `\n ✅ <@${invocation.user.id}> approved!`;
                     message.attachments[0].actions = undefined;
                 }
                 break;
-            case 'reply':
-                post.reply('replyです');
-                return invocation.original_message;
-            case 'destroy':
-                post.destroy();
-                return invocation.original_message;
+
+            case 'reject':
+                if (message.attachments) {
+                    message.attachments[0].text = message.attachments[0].text + `\n ❎ <@${invocation.user.id}> rejected`;
+                    message.attachments[0].actions = undefined;
+                }
+                break;
             default:
                 break;
         }
         return message;
     })
-}
-function doGet(e: any) {
-    console.log(e);
-    return ContentService.createTextOutput(JSON.stringify(e));
 }
