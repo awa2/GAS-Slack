@@ -1,4 +1,4 @@
-import {Slack, Post, Invocation } from '../index';
+import {Slack, Post, Invocation } from '../../index';
 
 const slackbot = new Slack.Bot('GAS-Bot', PropertiesService.getScriptProperties().getProperty('SLACK_BOT_TOKEN') as string);
 const channel = PropertiesService.getScriptProperties().getProperty('SLACK_CHANNEL') as string;

@@ -10,5 +10,8 @@ node_modules/
 **/appsscript.json
 **/.claspignore
 
+# test code
+test/remote/
+
 # DS_store
 **/.DS_Store
