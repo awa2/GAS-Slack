@@ -41,7 +41,7 @@ function test_Bot_post() {
     );
 }
 function doPost(e: any) {
-    return Slack.handleInvocation(e.parameter.payload, (invocation: Invocation, post: Post) => {
+    return Slack.handleInvocation(JSON.parse(e.parameter.payload), (invocation: Invocation, post: Post) => {
         const message = invocation.original_message;
         switch (invocation.actions[0].value) {
             case 'approve':
