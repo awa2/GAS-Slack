@@ -1,6 +1,7 @@
 import {Slack, Post, Invocation } from '../../index';
 
-const slackbot = new Slack.Bot('GAS-Bot', PropertiesService.getScriptProperties().getProperty('SLACK_BOT_TOKEN') as string);
+Slack.setToken(PropertiesService.getScriptProperties().getProperty('SLACK_BOT_TOKEN') as string);
+const slackbot = Slack.createBot('GAS-Bot');
 const channel = PropertiesService.getScriptProperties().getProperty('SLACK_CHANNEL') as string;
 
 function test_Bot_post() {

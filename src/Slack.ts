@@ -4,11 +4,11 @@ export class Slack {
     public static setToken(token: string) {
         Slack.TOKEN = token;
     }
-    public static createBot(ch: string, attachment: Attachement) {
-        return new Slack.Bot(ch, Slack.TOKEN);
+    public static createBot(bot_name: string) {
+        return new Slack.Bot(bot_name, Slack.TOKEN);
     }
 
-    public static Bot = class {
+    public static Bot = class Bot {
         public bot_name: string;
         public token: string;
         constructor(bot_name: string, token: string) {
