@@ -17,14 +17,14 @@ export namespace Slack {
             this.token = token;
             return this;
         }
-        post(ch: string, attachment: Attachement, mention?: string) {
+        post(ch: string, attachment: Attachment|Attachment[], mention?: string) {
             const payload = {
                 channel: ch,
                 text: '',
                 link_names: 1,
                 parse: 'full',
                 username: this.bot_name,
-                attachments: JSON.stringify([attachment])
+                attachments: Array.isArray(attachment) ? JSON.stringify(attachment) : JSON.stringify([attachment])
             }
 
             const res: PostResponse = JSON.parse(UrlFetchApp.fetch(`${API_URL}/chat.postMessage`, {
@@ -62,7 +62,7 @@ export namespace Slack {
             this.token = token ? token : TOKEN;
             return this;
         }
-        public update(attachment: Attachement) {
+        public update(attachment: Attachment) {
             const payload = {
                 channel: this.channel,
                 text: '',
@@ -112,13 +112,13 @@ export type Payload = {
 }
 export type Message = {
     text?: string,
-    attachments?: Attachement[],
+    attachments?: Attachment[],
     thread_ts?: string,
     response_type?: 'in_channel' | 'ephemeral',
     replace_original?: boolean,
     delete_original?: boolean
 }
-export type Attachement = {
+export type Attachment = {
     fallback?: string,             //"Required plain-text summary of the attachment.",
     callback_id?: string,          //"wopr_game",
     color?: string,                 //"#2eb886",
