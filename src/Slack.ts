@@ -39,7 +39,7 @@ export namespace Slack {
         }
     }
 
-    export function handleInvocation(invocation: Invocation, callback: (inv: Invocation, post: Post) => {}) {
+    export function handleInvocation(invocation: Invocation, callback: (inv: Invocation, post: Post) => Message) {
         const post = new Post(invocation.user.name, invocation.channel.id, invocation.message_ts, invocation.original_message);
         const body = callback(invocation, post);
         const output = ContentService.createTextOutput(JSON.stringify(body));
